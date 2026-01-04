@@ -35,3 +35,18 @@ print("Gereksiz dosyalar silindi, RAM temizlendi. Analize hazırız!")
 
 # İlk 5 satırı görelim ki neye benziyormuş verimiz
 print(train.head())
+
+print("\n" + "#"*30)
+print("ADIM 4: HEDEF DEĞİŞKEN ANALİZİ (EDA)")
+print("#"*30)
+
+# isFraud sütunu: 0 -> Normal İşlem, 1 -> Dolandırıcılık
+# value_counts() fonksiyonu kaç tane 0 kaç tane 1 var sayar.
+fraud_counts = train['isFraud'].value_counts()
+print("Sayılar:\n", fraud_counts)
+
+# Oransal olarak bakalım (mean bize ortalamayı, yani 1'lerin oranını verir)
+fraud_rate = train['isFraud'].mean() * 100
+print(f"\nDolandırıcılık Oranı: %{fraud_rate:.2f}")
+
+print("#"*30)
