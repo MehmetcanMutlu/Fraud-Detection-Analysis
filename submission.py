@@ -7,7 +7,7 @@ import numpy as np
 import gc
 
 def main():
-    print("🚀 KAGGLE SUBMISSION MODU BAŞLATILIYOR")
+    print("🚀 KAGGLE SUBMISSION MODU BAŞLATILIYOR (OPTUNA AYARLARI)")
     print("="*40)
 
     # 1. VERİLERİ YÜKLE
@@ -28,13 +28,11 @@ def main():
     del train_trans, train_id, test_trans, test_id
     gc.collect()
 
-    # ⚠️ KRİTİK NOKTA (HATAYI ÇÖZEN KISIM)
-    # Etiket (dataset_type) kullanmak yerine, train setinin uzunluğunu kaydediyoruz.
-    # Feature Engineering sonrası bu sayıdan kesip ayıracağız.
+    # Data Leakage Önlemi: Index Slicing için uzunluğu kaydet
     train_len = len(train_df)
     print(f"[BILGI] Train seti uzunluğu kaydedildi: {train_len}")
 
-    # Test setinde 'isFraud' sütunu yok, hata vermesin diye geçici olarak ekliyoruz.
+    # Test setinde 'isFraud' sütunu yok, hata vermesin diye geçici ekliyoruz
     test_df['isFraud'] = -1 
 
     # 3. TEK PARÇA HALİNE GETİR (Concat)
@@ -45,9 +43,10 @@ def main():
     gc.collect()
 
     # 4. FEATURE ENGINEERING
+    # Tüm veriyi (Train + Test) aynı anda işliyoruz ki tutarlı olsun
     full_df = run_feature_engineering(full_df)
 
-    # 5. TEKRAR AYIR (Index Slicing ile)
+    # 5. TEKRAR AYIR (Index Slicing)
     print("\n4. Adım: Veriler tekrar ayrılıyor (Index Slicing)...")
     
     # 0'dan train_len'e kadar olanlar TRAIN
@@ -56,30 +55,34 @@ def main():
     # train_len'den sonuna kadar olanlar TEST
     test_df = full_df.iloc[train_len:]
     
-    # Test verisinden geçici isFraud sütununu atalım
-    test_ids = test_df['TransactionID'] # ID'leri sakla
-    test_df = test_df.drop(['isFraud', 'TransactionID'], axis=1) # Temizle
+    # Test verisinden geçici isFraud ve ID'leri temizle
+    test_ids = test_df['TransactionID']
+    test_df = test_df.drop(['isFraud', 'TransactionID'], axis=1)
     
     del full_df
     gc.collect()
 
-    # 6. MODEL EĞİTİMİ
-    print("\n5. Adım: Model eğitiliyor (Full Train Seti ile)...")
+    # 6. MODEL EĞİTİMİ (SÜPER AYARLAR İLE)
+    print("\n5. Adım: Model eğitiliyor (Optuna ile optimize edildi)...")
     
     y = train_df['isFraud'].astype(int)
     X = train_df.drop(['isFraud', 'TransactionID'], axis=1)
     
     # Dengesizlik ayarı
     ratio = float(np.sum(y == 0)) / np.sum(y == 1)
-    print(f"[BILGI] Pos/Neg Oranı: {ratio:.2f}")
+    print(f"[BILGI] Pos/Neg Oranı (scale_pos_weight): {ratio:.2f}")
     
+    # 🔥 OPTUNA ROBOTUNUN BULDUĞU PARAMETRELER 🔥
     model = xgb.XGBClassifier(
-        n_estimators=500,
-        max_depth=10,
-        learning_rate=0.05,
-        scale_pos_weight=ratio,
+        n_estimators=165,           # Robot buldu
+        max_depth=12,               # Robot buldu (Derin öğrenme)
+        learning_rate=0.190197,     # Robot buldu
+        subsample=0.86821,          # Robot buldu
+        colsample_bytree=0.98775,   # Robot buldu
+        scale_pos_weight=ratio,     # Dengesizlik ayarı (Sabit)
         random_state=42,
-        tree_method='hist'
+        tree_method='hist',         # Hızlandırma
+        eval_metric='auc'
     )
     
     model.fit(X, y, verbose=True)
@@ -88,6 +91,7 @@ def main():
     # 7. TAHMİN VE KAYIT
     print("\n6. Adım: Submission dosyası hazırlanıyor...")
     
+    # Olasılık tahmini (0-1 arası)
     preds = model.predict_proba(test_df)[:, 1]
     
     submission = pd.DataFrame({
@@ -97,7 +101,7 @@ def main():
     
     submission.to_csv('submission.csv', index=False)
     print("\n🎉 TEBRİKLER! 'submission.csv' dosyası oluşturuldu.")
-    print("GitHub'a atmadan önce Kaggle'a yükleyip sıranı görebilirsin!")
+    print("🚀 Kaggle'a yüklemeye hazırsın! (Hedef: 0.92+ Public Score)")
 
 if __name__ == "__main__":
     main()
