@@ -1,17 +1,23 @@
-# 🕵️‍♂️ IEEE-CIS Fraud Detection Project
+#  IEEE-CIS Fraud Detection Project
 
-## 📌 Proje Hakkında
+##  Proje Hakkında
 Bu proje, finansal işlemlerde kredi kartı dolandırıcılığını (fraud) tespit etmek amacıyla geliştirilmiştir. IEEE-CIS veri seti kullanılarak, milyonlarca işlem arasından dolandırıcıları yakalayan bir Makine Öğrenmesi modeli kurulmuştur.
 
 Büyük ölçekli ve dengesiz (imbalanced) veri setleri üzerinde çalışılmış, **Feature Engineering** teknikleri ile ham veri anlamlı hale getirilmiştir.
 
-## 🏆 Kaggle Başarı Skorları
-Modelin Kaggle yarışmasındaki gerçek performans sonuçları:
-* **Public Score:** `0.9102` 🚀
-* **Private Score:** `0.8528`
-* **Local ROC-AUC:** `0.9416`
+##  Kaggle Performans Sonuçları
+Proje sürecinde farklı modeller geliştirilmiş ve Kaggle üzerinde test edilmiştir. Hiperparametre optimizasyonu (Optuna) sayesinde modelin **genelleştirme yeteneği (Private Score)** artırılmıştır.
 
-## 📊 Modelin "Dolandırıcıyı" Yakalama Kriterleri (Feature Importance)
+| Model Versiyonu | Açıklama | Public Score | Private Score | Durum |
+|----------------|----------|--------------|---------------|-------|
+| **v1.0** | XGBoost (Manuel) | **0.9102** | 0.8528 | Overfitting Riski |
+| **v2.0** | XGBoost + Optuna | 0.9061 | **0.8597**  | **Daha Kararlı (Robust)** |
+
+> **Analiz:** v2 modelinde Public Score hafif düşmesine rağmen, gerçek veri setini temsil eden **Private Score artmıştır.** Bu durum, Optuna optimizasyonunun modeldeki ezberlemeyi (overfitting) azalttığını ve modelin gerçek hayatta daha başarılı olacağını göstermektedir.
+
+* **Local ROC-AUC:** `0.9708` (Eğitim sırasındaki validasyon skoru)
+
+##  Modelin "Dolandırıcıyı" Yakalama Kriterleri (Feature Importance)
 Modelimiz, işlemleri analiz ederken aşağıdaki özelliklere dikkat etmektedir. Grafikte dolandırıcılığı en çok ele veren faktörler görülmektedir:
 
 ![Feature Importance Grafiği](outputs/feature_importance.png)
@@ -26,7 +32,7 @@ Modelimiz, işlemleri analiz ederken aşağıdaki özelliklere dikkat etmektedir
     * **Class Imbalance Handling:** `scale_pos_weight` optimizasyonu
     * **Modular Architecture:** `src/` klasörü altında temiz kod yapısı
 
-## 🚀 Kurulum
+##  Kurulum
 Projeyi kendi bilgisayarınızda çalıştırmak için:
 
 ```bash
