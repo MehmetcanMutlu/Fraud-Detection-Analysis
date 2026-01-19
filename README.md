@@ -5,14 +5,17 @@ Bu proje, finansal işlemlerde kredi kartı dolandırıcılığını (fraud) tes
 
 Büyük ölçekli ve dengesiz (imbalanced) veri setleri üzerinde çalışılmış, **Feature Engineering** teknikleri ile ham veri anlamlı hale getirilmiştir.
 
-##  Kaggle Performans Gelişimi
-Proje sürecinde model adım adım geliştirilmiş ve her aşamada performans artışı sağlanmıştır. Özellikle **Advanced Feature Engineering** aşamasında, veriden türetilen akıllı değişkenler sayesinde hem Public hem de Private skorlarda zirveye ulaşılmıştır.
+##  Kaggle Performans Yolculuğu (Final)
+Proje boyunca uygulanan stratejiler ile model performansı adım adım zirveye taşınmıştır. **Ensemble Learning** yöntemi ile Public Score'da **0.92** barajı aşılmıştır.
 
 | Versiyon | Yöntem | Public Score | Private Score | Sonuç |
 |:---:|:---|:---:|:---:|:---|
-| **v1.0** | Base XGBoost | 0.9102 | 0.8528 | Başlangıç Modeli |
-| **v2.0** | XGBoost + Optuna | 0.9061 | 0.8597 | Daha Kararlı (Overfitting azaldı) |
-| **v3.0** | **Feature Engineering** | **0.9155**  | **0.8632**  | **En Yüksek Performans!** |
+| **v1.0** | Base XGBoost | 0.9102 | 0.8528 | Başlangıç |
+| **v2.0** | XGBoost + Optuna | 0.9061 | 0.8597 | Stabilizasyon |
+| **v3.0** | Feature Engineering | 0.9155 | 0.8632 | Zeka Katıldı |
+| **v4.0** | **Ensemble (XGB + LGBM)** | **0.9269**  | **0.8810**  | **ZİRVE (Final Model)** |
+
+> **Sonuç:** Farklı algoritmaların (XGBoost ve LightGBM) güçlerinin birleştirilmesi (Ensembling), modelin hata oranını ciddi ölçüde düşürmüş ve Private Score'da **%2'ye yakın** dev bir artış sağlamıştır.
 
 > **Teknik Not:** v3 sürümünde eklenen *Aggregation Features* (Ortalamadan sapma analizleri) ve *Frequency Encoding* (Sıklık analizleri) sayesinde model, dolandırıcılık kalıplarını çok daha net tespit etmiştir.
 
