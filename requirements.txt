@@ -6,3 +6,6 @@ scikit-learn
 xgboost
 optuna
 lightgbm
+streamlit 
+plotly 
+joblib
